@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\TwoKings\SocialHub\Config;
+namespace Bolt\Extension\TwoKings\IsUseful\Config;
 
 use Symfony\Component\HttpFoundation\ParameterBag;
 

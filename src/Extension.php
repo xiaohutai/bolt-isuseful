@@ -1,32 +1,32 @@
 <?php
 
-namespace Bolt\Extension\TwoKings\SocialHub;
+namespace Bolt\Extension\TwoKings\IsUseful;
 
 use Bolt\Asset\File\JavaScript;
 use Bolt\Asset\File\Stylesheet;
 use Bolt\Controller\Zone;
 use Bolt\Extension\DatabaseSchemaTrait;
 use Bolt\Extension\SimpleExtension;
-use Bolt\Extension\TwoKings\SocialHub\Config\Config;
+use Bolt\Extension\TwoKings\IsUseful\Config\Config;
 use Silex\Application;
 use Silex\ControllerCollection;
 
 /**
  * @author Xiao-Hu Tai <xiao@twokings.nl>
  */
-class SocialHubExtension extends SimpleExtension
+class Extension extends SimpleExtension
 {
-    use DatabaseSchemaTrait;
+    // use DatabaseSchemaTrait;
 
     /**
      * {@inheritdoc}
      */
-    protected function registerExtensionTables()
-    {
-        return [
-            'is_useful' => IsUsefulTable::class,
-        ];
-    }
+    // protected function registerExtensionTables()
+    // {
+    //     return [
+    //         'is_useful' => IsUsefulTable::class,
+    //     ];
+    // }
 
     protected function registerFrontendRoutes(ControllerCollection $collection)
     {
@@ -82,7 +82,7 @@ class SocialHubExtension extends SimpleExtension
      */
     protected function registerServices(Application $app)
     {
-        $this->extendDatabaseSchemaServices();
+        // $this->extendDatabaseSchemaServices();
 
         $app['is_useful.config'] = $app->share(function () { return new Config($this->getConfig()); });
     }

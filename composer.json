@@ -1,6 +1,6 @@
 {
-    "name": "twokings/socialhub",
-    "description": "Social Hub helper functions",
+    "name": "twokings/is-useful",
+    "description": "Add a simple 'Is this page useful?' to your pages",
     "type": "bolt-extension",
     "keywords": [
         "useful",
@@ -20,12 +20,12 @@
     "prefer-stable": true,
     "autoload": {
         "psr-4": {
-            "Bolt\\Extension\\TwoKings\\SocialHub\\": "src"
+            "Bolt\\Extension\\TwoKings\\IsUseful\\": "src"
         }
     },
     "extra": {
         "bolt-assets": "web",
-        "bolt-class": "Bolt\\Extension\\TwoKings\\SocialHub\\SocialHubExtension",
+        "bolt-class": "Bolt\\Extension\\TwoKings\\IsUseful\\IsUsefulExtension",
         "bolt-icon": "bolt-icon.png",
     },
     "suggest": {

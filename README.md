@@ -1,10 +1,6 @@
-# Social Hub Extension
-
-Helper functions for the Social Hub website.
-
 # Is Useful Extension
 
-This is a simple extension that adds the feature to add a  "Is this page useful? Yes No"
+This is a simple extension that adds the feature to add a "Is this page useful? Yes No"
 to your pages. It has two modes:
 
 - `link`: If a user clicks 'No', it will go to that page.
@@ -63,6 +59,16 @@ In your template add:
 ```
 
 Or copy the twig file to your theme, customize it and include that file.
+
+
+## Ideas and Thoughts
+
+- Track individual "Yes" and "No" clicks in the database.
+  - Could be nice for something like "80% of visitors found this page useful".
+- Allow BoltForms formnames other than `'feedback'`.
+  - Currently there's a hard-coded formname (in JavaScript).
+- Handle BoltForms errors.
+  - Currently there is no error handling once the AJAX request is made.
 
 <!--
 Inspired from GOV.UK, e.g. https://www.gov.uk/service-manual/measuring-success/measuring-user-satisfaction

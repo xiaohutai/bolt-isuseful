@@ -44,7 +44,7 @@ jQuery(function ($) {
     // use this global function and check for the correct event.
     // So this function assumes there will be only ONE `.is-useful-wrapper`.
     $(document).ajaxComplete(function(event, request, settings){
-        if (settings.url == '/async/boltforms/submit?form=feedback') {
+        if (settings.url == '/async/boltforms/submit?form=feedback') { // todo: make customizable for other form names
             var $parent = $('.is-useful-wrapper');
             var thanks = $parent.attr('data-thanks');
             $parent.html('<span class="is-useful-success">' + thanks + '</span>');

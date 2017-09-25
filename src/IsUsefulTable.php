@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\TwoKings\SocialHub;
+namespace Bolt\Extension\TwoKings\IsUseful;
 
 use Bolt\Storage\Database\Schema\Table\BaseTable;
 
