@@ -26,7 +26,7 @@
     "extra": {
         "bolt-assets": "web",
         "bolt-class": "Bolt\\Extension\\TwoKings\\IsUseful\\IsUsefulExtension",
-        "bolt-icon": "bolt-icon.png",
+        "bolt-icon": "bolt-icon.png"
     },
     "suggest": {
         "bolt/boltforms": "A form generator for Bolt CMS"
