@@ -1,0 +1,38 @@
+{% set config = app['is_useful.config'].all() %}
+{% set attributes = '' %}
+{% if config.type == 'boltforms' %}
+    {% set attributes = 'aria-expanded="false"' %}
+{% elseif config.type == 'link' %}
+    {% set attributes = 'href="' ~ config.link ~ '?url=' ~ global.request.getUri()|url_encode ~ '"' %}
+{% endif %}
+
+<div
+    class="{{ config.css.wrapper }}"
+    data-thanks="{{ config.label.thanks }}"
+    data-type="{{ config.type }}">
+    <p>
+        {{ config.label.question }}
+        {% spaceless %}
+        <a class="is-useful">
+            {{- config.label.yes -}}
+            <span class="{{ config.css.visuallyhidden }}"> {{ config.label.yes_detail -}}
+            </span>
+        </a>
+        <a class="is-not-useful" {{ attributes|raw }}>
+            {{- config.label.no -}}
+            <span class="{{ config.css.visuallyhidden }}"> {{ config.label.no_detail -}}
+            </span>
+        </a>
+        {% endspaceless %}
+    </p>
+    {% if config.type == 'boltforms' and config.formname is defined %}
+        <div class="{{ config.css.expand }}" aria-hidden="true">
+            <button class="close-button" aria-label="{{ config.label.close }}" type="button">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            {{ boltforms(config.formname, defaults = {
+                url: global.request.getUri()
+            }) }}
+        </div>
+    {% endif %}
+</div>

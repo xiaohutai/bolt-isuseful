@@ -1,0 +1,34 @@
+{
+    "name": "twokings/socialhub",
+    "description": "Social Hub helper functions",
+    "type": "bolt-extension",
+    "keywords": [
+        "useful",
+        "feedback"
+    ],
+    "require": {
+        "bolt/bolt": "^3.0"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Xiao-Hu Tai",
+            "email": "xiao@twokings.nl"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "Bolt\\Extension\\TwoKings\\SocialHub\\": "src"
+        }
+    },
+    "extra": {
+        "bolt-assets": "web",
+        "bolt-class": "Bolt\\Extension\\TwoKings\\SocialHub\\SocialHubExtension",
+        "bolt-icon": "bolt-icon.png",
+    },
+    "suggest": {
+        "bolt/boltforms": "A form generator for Bolt CMS"
+    }
+}

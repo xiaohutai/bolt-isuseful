@@ -1,0 +1,40 @@
+# Pick one of two options.
+
+# ------------------------------------------------------------------------------
+# Option 1: Link
+# ------------------------------------------------------------------------------
+
+type: link
+link: '/contact'
+
+# ------------------------------------------------------------------------------
+# Option 2: Boltforms
+# ------------------------------------------------------------------------------
+
+# type: boltforms
+# formname: feedback
+
+# ------------------------------------------------------------------------------
+# General
+# ------------------------------------------------------------------------------
+
+label:
+    question: Is this page useful?
+    yes: Yes
+    yes_detail: this page is useful
+    no: No
+    no_detail: this page is not useful
+    thanks: Thanks for your feedback
+    close: Close form
+
+# visuallyhidden: Classes for visually hidden elements; these elements can be
+#                 read/interpreted by screen readers and other assisitive
+#                 technologies. Common class names are 'sr-only', 'at-only',
+#                 and 'visually-hidden'.
+css:
+    wrapper        : 'is-useful-wrapper' # do not change if you use default js/css
+    expand         : 'expand'            # do not change if you use default js/css
+    visuallyhidden : 'visually-hidden'
+
+add_js: true
+add_css: true
