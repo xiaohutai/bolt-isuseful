@@ -25,7 +25,7 @@
     },
     "extra": {
         "bolt-assets": "web",
-        "bolt-class": "Bolt\\Extension\\TwoKings\\IsUseful\\IsUsefulExtension"
+        "bolt-class": "Bolt\\Extension\\TwoKings\\IsUseful\\Extension"
     },
     "suggest": {
         "bolt/boltforms": "A form generator for Bolt CMS"
