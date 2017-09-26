@@ -69,6 +69,8 @@ Or copy the twig file to your theme, customize it and include that file.
   - Currently there's a hard-coded formname (in JavaScript).
 - Handle BoltForms errors.
   - Currently there is no error handling once the AJAX request is made.
+- Handle ReCaptcha
+  - Currently it does not work if ReCaptcha is enabled for that form.
 
 <!--
 Inspired from GOV.UK, e.g. https://www.gov.uk/service-manual/measuring-success/measuring-user-satisfaction

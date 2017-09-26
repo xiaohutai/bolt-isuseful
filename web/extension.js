@@ -2,7 +2,7 @@ jQuery(function ($) {
     // Hide labels for hidden fields
     $('.is-useful-wrapper .expand').hide();
 
-    // Hide the whole and show a thanks you message
+    // Hide the whole and show a thank you message
     $('.is-useful-wrapper .is-useful').on('click', function(e){
         e.preventDefault();
         var $parent = $(this).parents('.is-useful-wrapper');
