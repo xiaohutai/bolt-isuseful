@@ -34,9 +34,9 @@
                 <span aria-hidden="true">&times;</span>
             </button>
             {{ boltforms(config.formname, defaults = {
-                url         : global.request.getUri(),
-                contenttype : record.contenttype.slug,
-                contentid   : record.id
+                url  : global.request.getUri(),
+                type : record.contenttype.slug,
+                id   : record.id
             }) }}
         </div>
     {% endif %}

@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\TwoKings\IsUseful;
+namespace Bolt\Extension\TwoKings\IsUseful\Table;
 
 use Bolt\Storage\Database\Schema\Table\BaseTable;
 

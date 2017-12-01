@@ -9,9 +9,12 @@ use Bolt\Extension\DatabaseSchemaTrait;
 use Bolt\Extension\SimpleExtension;
 use Bolt\Extension\TwoKings\IsUseful\Config\Config;
 use Bolt\Extension\TwoKings\IsUseful\EventListener\FormListener;
+use Bolt\Extension\TwoKings\IsUseful\Model\Stats;
+use Bolt\Extension\TwoKings\IsUseful\Table;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @author Xiao-Hu Tai <xiao@twokings.nl>
@@ -23,19 +26,26 @@ class Extension extends SimpleExtension
     /**
      * {@inheritdoc}
      */
-    // protected function subscribe(EventDispatcherInterface $dispatcher)
-    // {
-    //     $dispatcher->addSubscriber(new FormListener($this->getContainer()));
-    // }
+    protected function subscribe(EventDispatcherInterface $dispatcher)
+    {
+        $dispatcher->addSubscriber(new FormListener($this->getContainer()));
+    }
 
     /**
      * {@inheritdoc}
      */
     protected function registerExtensionTables()
     {
-        return [
-            'is_useful' => IsUsefulTable::class,
-        ];
+        $config = $this->getConfig();
+
+        if (isset($config['statistics']) && $config['statistics'] !== false) {
+            return [
+                'is_useful'          => Table\IsUsefulTable::class,
+                'is_useful_feedback' => Table\IsUsefulFeedbackTable::class,
+            ];
+        }
+
+        return [];
     }
 
     /**

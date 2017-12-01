@@ -101,4 +101,12 @@ class Stats {
             $this->db->update($this->tableName, $data, ['id' => $data['id']]);
         }
     }
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->data['id'];
+    }
 }

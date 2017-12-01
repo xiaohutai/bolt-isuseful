@@ -4,6 +4,7 @@ namespace Bolt\Extension\TwoKings\IsUseful\EventListener;
 
 use Bolt\Extension\Bolt\BoltForms\Event\BoltFormsEvents;
 use Bolt\Extension\Bolt\BoltForms\Event\ProcessorEvent;
+use Bolt\Extension\TwoKings\IsUseful\Model\Stats;
 use Bolt\Storage\Entity\Entity;
 use Silex\Application;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -57,23 +58,30 @@ class FormListener implements EventSubscriberInterface
     /**
      * @param ProcessorEvent $event
      */
-    private function onFeedback(ProcessorEvent $event) {
+    public function onFeedback(ProcessorEvent $event) {
         /** @var Entity $data */
         $data = $event->getData();
 
-        $url = $data->get('url');
+        $config = $this->app['is_useful.config'];
 
-        $stats = new Stats(
-            $this->app['db'],
-            $data->get('contenttype'),
-            $data->get('contentid')
-        );
-        $stats->set(
-            $this->app['request']->getClientIp(),
-            'no' // $type
-        );
+        if ($config->get('statistics', false) !== false) {
 
-        // Note: This would only store 'no' values, because 'yes' doesn't submit
-        //       a form.
+            $stats = new Stats(
+                $this->app['db'],
+                $data->get('type'),
+                $data->get('id')
+            );
+
+            $this->app['db']->insert('bolt_is_useful_feedback', [
+                'contenttype'  => $data->get('type'),
+                'contentid'    => $data->get('id'),
+                'is_useful_id' => $stats->getId(),
+                'ip'           => $this->app['request']->getClientIp(),
+                'url'          => $data->get('url'),
+                'message'      => $data->get('message'),
+                'datetime'     => (new \DateTime('now'))->format('Y-m-d H:i:s'),
+            ]);
+        }
+
     }
 }

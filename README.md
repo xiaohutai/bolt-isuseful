@@ -44,6 +44,20 @@ feedback:
                 required: false
                 attr:
                     class: hidden
+        type:
+            type: hidden
+            options:
+                label: Type
+                required: false
+                attr:
+                    class: hidden
+        id:
+            type: hidden
+            options:
+                label: ID
+                required: false
+                attr:
+                    class: hidden
         submit:
             type: submit
             options:

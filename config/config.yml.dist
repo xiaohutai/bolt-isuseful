@@ -38,3 +38,13 @@ css:
 
 add_js: true
 add_css: true
+
+# ------------------------------------------------------------------------------
+# Statistics
+# ------------------------------------------------------------------------------
+
+# This feature is available since v0.2.0, defaults to `false`. Update database
+# via Bolt or Nut. In your custom JavaScript, you can add a `ping` function to
+# store the user's "yes"/"no" value, only the last vote will be counted.
+
+statistics: false
