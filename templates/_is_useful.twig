@@ -9,7 +9,10 @@
 <div
     class="{{ config.css.wrapper }}"
     data-thanks="{{ config.label.thanks }}"
-    data-type="{{ config.type }}">
+    data-type="{{ config.type }}"
+    data-contenttype="{{ record.contenttype.slug }}"
+    data-contentid="{{ record.id }}"
+    >
     <p>
         {{ config.label.question }}
         {% spaceless %}
@@ -31,7 +34,9 @@
                 <span aria-hidden="true">&times;</span>
             </button>
             {{ boltforms(config.formname, defaults = {
-                url: global.request.getUri()
+                url         : global.request.getUri(),
+                contenttype : record.contenttype.slug,
+                contentid   : record.id
             }) }}
         </div>
     {% endif %}
