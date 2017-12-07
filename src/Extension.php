@@ -8,9 +8,11 @@ use Bolt\Controller\Zone;
 use Bolt\Extension\DatabaseSchemaTrait;
 use Bolt\Extension\SimpleExtension;
 use Bolt\Extension\TwoKings\IsUseful\Config\Config;
+use Bolt\Extension\TwoKings\IsUseful\Controller\BackendController;
 use Bolt\Extension\TwoKings\IsUseful\EventListener\FormListener;
 use Bolt\Extension\TwoKings\IsUseful\Model\Stats;
 use Bolt\Extension\TwoKings\IsUseful\Table;
+use Bolt\Menu\MenuEntry;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -24,11 +26,48 @@ class Extension extends SimpleExtension
     use DatabaseSchemaTrait;
 
     /**
+     * Checks whether the statistics part is enabled.
+     *
+     * @param bool
+     */
+    private function showStatistics()
+    {
+        $config = $this->getConfig();
+
+        return (isset($config['statistics']) && $config['statistics'] !== false);
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function subscribe(EventDispatcherInterface $dispatcher)
     {
-        $dispatcher->addSubscriber(new FormListener($this->getContainer()));
+        if ($this->showStatistics()) {
+            $dispatcher->addSubscriber(new FormListener($this->getContainer()));
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function registerBackendControllers()
+    {
+        return [
+            '/extensions/is-useful' => new BackendController(),
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function registerMenuEntries()
+    {
+        $menuEntry = (new MenuEntry('is-useful', 'is-useful'))
+            ->setLabel('Feedback')
+            ->setIcon('fa:commenting-o')
+            ->setPermission('extensions')
+        ;
+        return [ $menuEntry ];
     }
 
     /**
@@ -36,9 +75,7 @@ class Extension extends SimpleExtension
      */
     protected function registerExtensionTables()
     {
-        $config = $this->getConfig();
-
-        if (isset($config['statistics']) && $config['statistics'] !== false) {
+        if ($this->showStatistics()) {
             return [
                 'is_useful'          => Table\IsUsefulTable::class,
                 'is_useful_feedback' => Table\IsUsefulFeedbackTable::class,
@@ -68,7 +105,7 @@ class Extension extends SimpleExtension
     {
         $contenttype = $request->request->get('contenttype');
         $id          = $request->request->get('contentid');
-        $type        = $request->request->get('type'); // 'yes' or 'no'
+        $type        = $request->request->get('type');
 
         if (!$contenttype || !$id || !in_array($type, ['yes', 'no'])) {
             return "One or more values are undefined: contenttype: [$contenttype] id: [$id] type: [$type] value: [$value]";
