@@ -27,9 +27,13 @@
                 {% set totalsTotal   = totalsNo + totalsYes %}
                 {% set percentageNo  = (totalsNo / totalsTotal) * 100 %}
                 {% set percentageYes = (totalsYes / totalsTotal) * 100 %}
+                {% setcontent record = "#{contenttype}/#{contentid}" %}
                 <tr>
                     <td>
-                        <a href="{{ path('editcontent', { contenttypeslug: contenttype, id: contentid }) }}">{{ contenttype }}/{{ contentid }}</a>
+                        {{ record.title}}
+                        <small>
+                            [<a href="{{ path('editcontent', { contenttypeslug: contenttype, id: contentid }) }}">Edit</a>]
+                        </small>
                     </td>
                     <td>{{ totalsNo }}</td>
                     <td>{{ percentageNo|number_format(2,'.','') }}%</td>
@@ -37,7 +41,7 @@
                     <td>{{ percentageYes|number_format(2,'.','') }}%</td>
                     <td>{{ totalsTotal }}</td>
                     <td>
-                        <a href="{{ path('is_useful.view', { id: item.id }) }}">View</a>
+                        <a class="btn btn-tertiary" href="{{ path('is_useful.view', { id: item.id }) }}">View</a>
                     </td>
                 </tr>
             {% endfor %}
