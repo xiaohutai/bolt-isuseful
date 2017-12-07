@@ -6,33 +6,71 @@
 
 {% block page_main %}
 
-    <div class="well">
-        TODO: view statistics, order by header click (client-side data-table), view feedback per item
-    </div>
+    <table data-table>
+        <thead>
+            <th>Record</th>
+            <th>No</th>
+            <th>No %</th>
+            <th>Yes</th>
+            <th>Yes %</th>
+            <th>Total</th>
+            <th>Details</th>
+        </thead>
+        <tbody>
+            {% for item in data %}
+                {% set contenttype   = item.contenttype %}
+                {% set contentid     = item.contentid %}
+                {% set totals        = item.totals|json_decode %}
+                {% set ips           = item.ips|json_decode %}
+                {% set totalsNo      = totals.no is defined ? totals.no : 0 %}
+                {% set totalsYes     = totals.yes is defined  ? totals.yes : 0 %}
+                {% set totalsTotal   = totalsNo + totalsYes %}
+                {% set percentageNo  = (totalsNo / totalsTotal) * 100 %}
+                {% set percentageYes = (totalsYes / totalsTotal) * 100 %}
+                <tr>
+                    <td>
+                        <a href="{{ path('editcontent', { contenttypeslug: contenttype, id: contentid }) }}">{{ contenttype }}/{{ contentid }}</a>
+                    </td>
+                    <td>{{ totalsNo }}</td>
+                    <td>{{ percentageNo|number_format(2,'.','') }}%</td>
+                    <td>{{ totalsYes }}</td>
+                    <td>{{ percentageYes|number_format(2,'.','') }}%</td>
+                    <td>{{ totalsTotal }}</td>
+                    <td>
+                        <a href="{{ path('is_useful.view', { id: item.id }) }}">View</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
-    <ul>
-        {% for item in data %}
-            {% set contenttype   = item.contenttype %}
-            {% set contentid     = item.contentid %}
-            {% set totals        = item.totals|json_decode %}
-            {% set ips           = item.ips|json_decode %}
-            {% set totalsNo      = totals.no is defined ? totals.no : 0 %}
-            {% set totalsYes     = totals.yes is defined  ? totals.yes : 0 %}
-            {% set totalsTotal   = totalsNo + totalsYes %}
-            {% set percentageNo  = (totalsNo / totalsTotal) * 100 %}
-            {% set percentageYes = (totalsYes / totalsTotal) * 100 %}
+    {% if feedback is defined and feedback is not empty %}
+        <table data-table>
+            <thead>
+                <th>Datetime</th>
+                <th>Message</th>
+            </thead>
+            <tbody>
+                {% for item in feedback %}
+                    {% set datetime = item.datetime %}
+                    {% set message  = item.message %}
+                    <tr>
+                        <td>{{ datetime }}</td>
+                        <td>{{ message }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% elseif feedback is defined %}
+        This item has no feedback yet.
+    {% endif %}
 
-            <li>
-                [{{ "#{contenttype}/#{contentid}" }}]
-                |
-                {{ totalsNo }} ({{ percentageNo|number_format(2,'.','') }}%)
-                |
-                {{ totalsYes }} ({{ percentageYes|number_format(2,'.','') }}%)
-                |
-                {{ totalsTotal }}
-            </li>
-
-        {% endfor %}
-    </ul>
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+    <script type="text/javascript" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script>
+    $(document).ready(function(){
+        $('[data-table]').DataTable();
+    });
+    </script>
 
 {% endblock page_main %}

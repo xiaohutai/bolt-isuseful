@@ -81,12 +81,19 @@ class BackendController extends Base
         $stmt->bindParam('id', $id);
         $stmt->execute();
         $data = $stmt->fetch();
-
         $data = [ $data ];
 
+        $stmt = $app['db']->prepare("SELECT * FROM `bolt_is_useful_feedback` WHERE `is_useful_id` = :id");
+        $stmt->bindParam('id', $id);
+        $stmt->execute();
+        $feedback = $stmt->fetch();
+
+        // basically show same stats as in index, but now with feedback
+
         return $this->render('@is_useful/backend/index.twig', [
-            'title' => 'Feedback',
-            'data'  => $data,
+            'title'    => 'Feedback » № ' . $id,
+            'data'     => $data,
+            'feedback' => $feedback,
         ], []);
     }
 }
