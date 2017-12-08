@@ -82,12 +82,14 @@ class BackendController extends Base
         $stmt->execute();
         $data = $stmt->fetchAll();
 
+        // check iff empty
+
         $stmt = $app['db']->prepare("SELECT * FROM `bolt_is_useful_feedback` WHERE `is_useful_id` = :id");
         $stmt->bindParam('id', $id);
         $stmt->execute();
         $feedback = $stmt->fetchAll();
 
-        return $this->render('@is_useful/backend/index.twig', [
+        return $this->render('@is_useful/backend/feedback.twig', [
             'title'    => 'Feedback » № ' . $id,
             'data'     => $data,
             'feedback' => $feedback,

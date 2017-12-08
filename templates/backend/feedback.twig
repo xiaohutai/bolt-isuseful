@@ -1,0 +1,70 @@
+{% extends '_base/_page-nav.twig' %}
+
+{% block page_nav title %}
+
+{% block page_title __(title) %}
+
+{% block page_main %}
+
+    <a href="{{ path('is_useful.index') }}">Index</a>
+
+    {% if data is not empty %}
+        {% set item = data|first %}
+
+        {% set contenttype   = item.contenttype %}
+        {% set contentid     = item.contentid %}
+        {% set totals        = item.totals|json_decode %}
+        {% set ips           = item.ips|json_decode %}
+        {% set totalsNo      = totals.no is defined ? totals.no : 0 %}
+        {% set totalsYes     = totals.yes is defined  ? totals.yes : 0 %}
+        {% set totalsTotal   = totalsNo + totalsYes %}
+        {% set percentageNo  = (totalsNo / totalsTotal) * 100 %}
+        {% set percentageYes = (totalsYes / totalsTotal) * 100 %}
+        {% setcontent record = "#{contenttype}/#{contentid}" %}
+
+        <ul>
+            <li>
+               <strong>Titel</strong>: {{ record.title }}
+            </li>
+            <li>
+                <strong>No</strong>: {{ totalsNo }} ({{ percentageNo|number_format(2,'.','') }}%)
+            </li>
+            <li>
+                <strong>Yes</strong>: {{ totalsYes }} ({{ percentageYes|number_format(2,'.','') }}%)
+            </li>
+        </ul>
+    {% endif %}
+
+    {% if feedback is not empty %}
+        <table data-table>
+            <thead>
+                <th>IP</th>
+                <th>Datetime</th>
+                <th>Message</th>
+            </thead>
+            <tbody>
+                {% for item in feedback %}
+                    {% set ip  = item.ip %}
+                    {% set datetime = item.datetime %}
+                    {% set message  = item.message %}
+                    <tr>
+                        <td>{{ ip }}</td>
+                        <td>{{ datetime }}</td>
+                        <td>{{ message }} </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        This item has no feedback yet.
+    {% endif %}
+
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+    <script type="text/javascript" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script>
+    $(document).ready(function(){
+        $('[data-table]').DataTable();
+    });
+    </script>
+
+{% endblock page_main %}

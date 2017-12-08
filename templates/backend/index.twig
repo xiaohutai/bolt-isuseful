@@ -48,27 +48,6 @@
         </tbody>
     </table>
 
-    {% if feedback is defined and feedback is not empty %}
-        <table data-table>
-            <thead>
-                <th>Datetime</th>
-                <th>Message</th>
-            </thead>
-            <tbody>
-                {% for item in feedback %}
-                    {% set datetime = item.datetime %}
-                    {% set message  = item.message %}
-                    <tr>
-                        <td>{{ datetime }}</td>
-                        <td>{{ message }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% elseif feedback is defined %}
-        This item has no feedback yet.
-    {% endif %}
-
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
     <script type="text/javascript" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
     <script>
