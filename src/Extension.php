@@ -37,6 +37,13 @@ class Extension extends SimpleExtension
         return (isset($config['statistics']) && $config['statistics'] !== false);
     }
 
+    private function getPermission()
+    {
+        $config = $this->getConfig();
+
+        return (isset($config['permission']) ? $config['permission'] : 'extensions');
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -65,7 +72,7 @@ class Extension extends SimpleExtension
         $menuEntry = (new MenuEntry('is-useful', 'is-useful'))
             ->setLabel('Feedback')
             ->setIcon('fa:commenting-o')
-            ->setPermission('extensions')
+            ->setPermission( $this->getPermission()  )
         ;
         return [ $menuEntry ];
     }

@@ -48,3 +48,9 @@ add_css: true
 # store the user's "yes"/"no" value, only the last vote will be counted.
 
 statistics: false
+
+# ------------------------------------------------------------------------------
+# Misc
+# ------------------------------------------------------------------------------
+
+permission: 'extensions'
