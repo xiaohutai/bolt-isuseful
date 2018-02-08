@@ -6,6 +6,11 @@
 
 {% block page_main %}
 
+    {{ include('@is_useful/backend/_navigation.twig') }}
+
+    {% set cumulativeNo  = 0 %}
+    {% set cumulativeYes = 0 %}
+
     <table data-table>
         <thead>
             <th>Record</th>
@@ -44,15 +49,35 @@
                         <a class="btn btn-tertiary" href="{{ path('is_useful.view', { id: item.id }) }}">View</a>
                     </td>
                 </tr>
+                {% set cumulativeNo  = cumulativeNo  + totalsNo %}
+                {% set cumulativeYes = cumulativeYes + totalsYes %}
             {% endfor %}
         </tbody>
     </table>
+
+    <hr>
+
+    <ul>
+        <li>
+            <strong>Total stats</strong>:
+            <ul>
+                <li>
+                    <strong>No</strong>: {{ cumulativeNo }} ({{ (100 * cumulativeNo / ( cumulativeNo + cumulativeYes ))|number_format(2,'.','') }})
+                </li>
+                <li>
+                    <strong>Yes</strong>: {{ cumulativeYes }} ({{ (100 * cumulativeYes / ( cumulativeNo + cumulativeYes ))|number_format(2,'.','') }}%)
+                </li>
+            </ul>
+        </li>
+    </ul>
 
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
     <script type="text/javascript" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
     <script>
     $(document).ready(function(){
-        $('[data-table]').DataTable();
+        $('[data-table]').DataTable({
+            pageLength: 100
+        });
     });
     </script>
 

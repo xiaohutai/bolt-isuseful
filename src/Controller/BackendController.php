@@ -20,6 +20,8 @@ class BackendController extends Base
      */
     public function addRoutes(ControllerCollection $ctr)
     {
+        // General
+
         $ctr
             ->get('/', [$this, 'indexGet'])
             ->before([$this, 'before'])
@@ -31,6 +33,28 @@ class BackendController extends Base
             ->assert('id', '\d+')
             ->before([$this, 'before'])
             ->bind('is_useful.view')
+        ;
+
+        $ctr
+            ->get('/unread', [$this, 'unreadGet'])
+            ->before([$this, 'before'])
+            ->bind('is_useful.unread')
+        ;
+
+        // Feedback
+
+        $ctr
+            ->get('/delete/{id}', [$this, 'deleteFeedback'])
+            ->assert('id', '\d+')
+            ->before([$this, 'before'])
+            ->bind('is_useful.feedback.delete')
+        ;
+
+        $ctr
+            ->get('/markasread/{id}', [$this, 'markFeedback'])
+            ->assert('id', '\d+')
+            ->before([$this, 'before'])
+            ->bind('is_useful.feedback.markasread')
         ;
 
         return $ctr;
@@ -71,6 +95,21 @@ class BackendController extends Base
 
     /**
      *
+     */
+    public function unreadGet(Application $app, Request $request)
+    {
+        $stmt = $app['db']->prepare("SELECT * FROM `bolt_is_useful_feedback` WHERE `read` = 0");
+        $stmt->execute();
+        $feedback = $stmt->fetchAll();
+
+        return $this->render('@is_useful/backend/unread.twig', [
+            'title' => 'Unread Feedback',
+            'feedback'=> $feedback,
+        ], []);
+    }
+
+    /**
+     *
      * @param Application $app
      * @param Request     $request
      * @param int         $id
@@ -84,7 +123,7 @@ class BackendController extends Base
 
         // check iff empty
 
-        $stmt = $app['db']->prepare("SELECT * FROM `bolt_is_useful_feedback` WHERE `is_useful_id` = :id");
+        $stmt = $app['db']->prepare("SELECT * FROM `bolt_is_useful_feedback` WHERE `is_useful_id` = :id AND `hide` = 0");
         $stmt->bindParam('id', $id);
         $stmt->execute();
         $feedback = $stmt->fetchAll();
@@ -94,5 +133,76 @@ class BackendController extends Base
             'data'     => $data,
             'feedback' => $feedback,
         ], []);
+    }
+
+    /**
+     * Removes feedback by ID
+     */
+    public function deleteFeedback(Application $app, Request $request, $id)
+    {
+        // (1) Remove
+        $stmt = $app['db']->prepare("UPDATE `bolt_is_useful_feedback` SET `hide` = 1 WHERE `id` = :id");
+        $stmt->bindParam('id', $id);
+        $stmt->execute();
+
+        // (2) Fetch
+        $stmt = $app['db']->prepare("SELECT * FROM `bolt_is_useful_feedback` WHERE `id` = :id");
+        $stmt->bindParam('id', $id);
+        $stmt->execute();
+        $feedback = $stmt->fetch();
+
+        // (3) Get the parent item
+        $sql  = "SELECT `bolt_is_useful`.*";
+        $sql .= " FROM `bolt_is_useful`";
+        $sql .= " JOIN `bolt_is_useful_feedback` ON `bolt_is_useful`.`id` = `bolt_is_useful_feedback`.`is_useful_id`";
+        $sql .= " WHERE `bolt_is_useful_feedback`.`id` = :id";
+
+        $stmt = $app['db']->prepare($sql);
+        $stmt->bindParam('id', $id);
+        $stmt->execute();
+        $parent = $stmt->fetch();
+
+        $totals = json_decode($parent['totals']);
+        $ips = json_decode($parent['ips']);
+
+        // Warning: this can make data inconsistent!
+        if (isset($totals->no)) {
+            $totals->no--;
+            if ($totals->no < 0) {
+                $totals->no = 0;
+            }
+        }
+        unset($ips->{$feedback['ip']});
+
+        $totals = json_encode($totals);
+        $ips = json_encode($ips);
+
+        // (4) Set parent item
+        $sql  = "UPDATE `bolt_is_useful`";
+        $sql .= " SET totals = :totals,";
+        $sql .= " ips = :ips";
+        $sql .= " WHERE `id` = :id";
+
+        $stmt = $app['db']->prepare($sql);
+        $stmt->bindParam('id', $parent['id']);
+        $stmt->bindParam('totals', $totals);
+        $stmt->bindParam('ips', $ips);
+        $stmt->execute();
+
+        return $this->redirect( $request->headers->get('referer') );
+
+        // return $this->redirect();
+    }
+
+    /**
+     * Mark feedback by ID as read
+     */
+    public function markFeedback(Application $app, Request $request, $id)
+    {
+        $stmt = $app['db']->prepare("UPDATE `bolt_is_useful_feedback` SET `read` = 1 WHERE `id` = :id");
+        $stmt->bindParam('id', $id);
+        $stmt->execute();
+
+        return $this->redirect( $request->headers->get('referer') );
     }
 }
