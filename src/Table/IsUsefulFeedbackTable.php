@@ -19,8 +19,9 @@ class IsUsefulFeedbackTable extends BaseTable
         $this->table->addColumn('message'      , 'text'    , ['notnull' => false]);
         $this->table->addColumn('url'          , 'string'  , ['notnull' => false]);
         $this->table->addColumn('datetime'     , 'datetime', ['notnull' => false]);
-        $this->table->addColumn('read'         , 'integer' , ['notnull' => false, 'default' => 0, ]);
-        $this->table->addColumn('hide'         , 'integer' , ['notnull' => false, 'default' => 0, ]);
+        // $this->table->addColumn('read'         , 'integer' , ['notnull' => false, 'default' => 0, ]);
+        // $this->table->addColumn('hide'         , 'integer' , ['notnull' => false, 'default' => 0, ]);
+        $this->table->addColumn('status'       , 'string'  , ['default' => 'new']);
     }
 
     /**

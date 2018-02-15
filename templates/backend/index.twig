@@ -32,6 +32,7 @@
                 {% set totalsTotal   = totalsNo + totalsYes %}
                 {% set percentageNo  = (totalsNo / totalsTotal) * 100 %}
                 {% set percentageYes = (totalsYes / totalsTotal) * 100 %}
+                {% set totalFeedback = item.count %}
                 {% setcontent record = "#{contenttype}/#{contentid}" %}
                 <tr>
                     <td>
@@ -46,7 +47,12 @@
                     <td>{{ percentageYes|number_format(2,'.','') }}%</td>
                     <td>{{ totalsTotal }}</td>
                     <td>
-                        <a class="btn btn-tertiary" href="{{ path('is_useful.view', { id: item.id }) }}">View</a>
+                        {% if totalFeedback > 0 %}
+                        <a class="btn btn-tertiary" href="{{ path('is_useful.view', { id: item.id }) }}">
+                            View
+                            <span class="badge">{{ totalFeedback }}</span>
+                        </a>
+                        {% endif %}
                     </td>
                 </tr>
                 {% set cumulativeNo  = cumulativeNo  + totalsNo %}

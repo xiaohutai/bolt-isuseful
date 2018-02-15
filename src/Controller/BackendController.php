@@ -3,6 +3,7 @@
 namespace Bolt\Extension\TwoKings\IsUseful\Controller;
 
 use Bolt\Controller\Base;
+use Bolt\Extension\TwoKings\IsUseful\Constant\FeedbackStatus;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\Request;
@@ -51,10 +52,11 @@ class BackendController extends Base
         ;
 
         $ctr
-            ->get('/markasread/{id}', [$this, 'markFeedback'])
+            ->get('/status/{id}/{status}', [$this, 'setFeedbackStatus'])
             ->assert('id', '\d+')
+            ->assert('status', 'new|read|done|removed')
             ->before([$this, 'before'])
-            ->bind('is_useful.feedback.markasread')
+            ->bind('is_useful.feedback.status')
         ;
 
         return $ctr;
@@ -83,7 +85,16 @@ class BackendController extends Base
      */
     public function indexGet(Application $app, Request $request)
     {
-        $stmt = $app['db']->prepare("SELECT * FROM `bolt_is_useful`");
+        $status = FeedbackStatus::REMOVED;
+
+        $sql  = "SELECT `bolt_is_useful`.*, COUNT(`bolt_is_useful_feedback`.`is_useful_id`) AS count";
+        $sql .= " FROM `bolt_is_useful`";
+        $sql .= " LEFT JOIN `bolt_is_useful_feedback` ON `bolt_is_useful`.`id` = `bolt_is_useful_feedback`.`is_useful_id`";
+        $sql .= " AND `bolt_is_useful_feedback`.`status` != :status";
+        $sql .= " GROUP BY `bolt_is_useful`.`id`";
+        $stmt = $app['db']->prepare($sql);
+        $stmt->bindParam('status', $status);
+        // $stmt = $app['db']->prepare("SELECT * FROM `bolt_is_useful`");
         $stmt->execute();
         $data = $stmt->fetchAll();
 
@@ -98,7 +109,10 @@ class BackendController extends Base
      */
     public function unreadGet(Application $app, Request $request)
     {
-        $stmt = $app['db']->prepare("SELECT * FROM `bolt_is_useful_feedback` WHERE `read` = 0");
+        $status = FeedbackStatus::UNREAD;
+
+        $stmt = $app['db']->prepare("SELECT * FROM `bolt_is_useful_feedback` WHERE `status` = :status");
+        $stmt->bindParam('status', $status);
         $stmt->execute();
         $feedback = $stmt->fetchAll();
 
@@ -123,8 +137,11 @@ class BackendController extends Base
 
         // check iff empty
 
-        $stmt = $app['db']->prepare("SELECT * FROM `bolt_is_useful_feedback` WHERE `is_useful_id` = :id AND `hide` = 0");
+        $status = FeedbackStatus::REMOVED;
+
+        $stmt = $app['db']->prepare("SELECT * FROM `bolt_is_useful_feedback` WHERE `is_useful_id` = :id AND `status` != :status");
         $stmt->bindParam('id', $id);
+        $stmt->bindParam('status', $status);
         $stmt->execute();
         $feedback = $stmt->fetchAll();
 
@@ -140,11 +157,15 @@ class BackendController extends Base
      */
     public function deleteFeedback(Application $app, Request $request, $id)
     {
+        $status = FeedbackStatus::REMOVED;
+
         // (1) Remove
-        $stmt = $app['db']->prepare("UPDATE `bolt_is_useful_feedback` SET `hide` = 1 WHERE `id` = :id");
+        $stmt = $app['db']->prepare("UPDATE `bolt_is_useful_feedback` SET `status` = :status WHERE `id` = :id");
+        $stmt->bindParam('status', $status);
         $stmt->bindParam('id', $id);
         $stmt->execute();
 
+        /*
         // (2) Fetch
         $stmt = $app['db']->prepare("SELECT * FROM `bolt_is_useful_feedback` WHERE `id` = :id");
         $stmt->bindParam('id', $id);
@@ -188,20 +209,24 @@ class BackendController extends Base
         $stmt->bindParam('totals', $totals);
         $stmt->bindParam('ips', $ips);
         $stmt->execute();
+        //*/
 
         return $this->redirect( $request->headers->get('referer') );
-
-        // return $this->redirect();
     }
 
     /**
-     * Mark feedback by ID as read
+     *
      */
-    public function markFeedback(Application $app, Request $request, $id)
+    public function setFeedbackStatus(Application $app, Request $request, $id, $status)
     {
-        $stmt = $app['db']->prepare("UPDATE `bolt_is_useful_feedback` SET `read` = 1 WHERE `id` = :id");
-        $stmt->bindParam('id', $id);
-        $stmt->execute();
+        if (in_array($status, FeedbackStatus::getConstants())) {
+            $stmt = $app['db']->prepare("UPDATE `bolt_is_useful_feedback` SET `status` = :status WHERE `id` = :id");
+            $stmt->bindParam('id', $id);
+            $stmt->bindParam('status', $status);
+            $stmt->execute();
+        } else {
+            // todo: invalid status
+        }
 
         return $this->redirect( $request->headers->get('referer') );
     }
