@@ -61,6 +61,7 @@
         </tbody>
     </table>
 
+    {% if (cumulativeNo + cumulativeYes) > 0 %}
     <hr>
 
     <ul>
@@ -76,6 +77,7 @@
             </ul>
         </li>
     </ul>
+    {% endif %}
 
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
     <script type="text/javascript" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
