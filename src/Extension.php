@@ -173,11 +173,11 @@ class Extension extends SimpleExtension
         }
 
         $assets[] = StyleSheet::create()
-            ->setFileName('extensions/vendor/twokings/is-useful/extension.css')
+            ->setFileName('extensions/vendor/twokings/is-useful/backend.css')
             ->setLate(true)
             ->setZone(Zone::BACKEND)
         ;
-        
+
         return $assets;
     }
 
