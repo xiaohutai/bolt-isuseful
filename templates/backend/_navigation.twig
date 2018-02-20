@@ -12,7 +12,7 @@
         <li class="{{ unreadActiveClass }}">
             <a class="" href="{{ path('is_useful.unread') }}"><i class="fa fa-inbox"></i>
                 {% if total_unread is not empty %}
-                    View unread feedback <span class="label label-danger">{{ total_unread|length }}</span>
+                    View unread feedback <span class="label label-danger">{{ total_unread }}</span>
                 {% else %}
                     No unread feedback
                 {% endif %}

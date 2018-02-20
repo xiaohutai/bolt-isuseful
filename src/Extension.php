@@ -177,7 +177,7 @@ class Extension extends SimpleExtension
             ->setLate(true)
             ->setZone(Zone::BACKEND)
         ;
-        
+
         return $assets;
     }
 

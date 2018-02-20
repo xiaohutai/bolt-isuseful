@@ -80,11 +80,11 @@ class BackendController extends Base
     /**
      *
      */
-    private function getUnreadFeedback()
+    private function getUnreadFeedback($db)
     {
         $status = FeedbackStatus::UNREAD;
 
-        $stmt = $app['db']->prepare("SELECT * FROM `bolt_is_useful_feedback` WHERE `status` = :status");
+        $stmt = $db->prepare("SELECT * FROM `bolt_is_useful_feedback` WHERE `status` = :status");
         $stmt->bindParam('status', $status);
         $stmt->execute();
         $feedback = $stmt->fetchAll();
@@ -116,7 +116,7 @@ class BackendController extends Base
         return $this->render('@is_useful/backend/index.twig', [
             'title'        => 'Feedback',
             'data'         => $data,
-            'total_unread' => count($this->getUnreadFeedback()),
+            'total_unread' => count($this->getUnreadFeedback($app['db'])),
         ], []);
     }
 
@@ -162,11 +162,22 @@ class BackendController extends Base
         $stmt->execute();
         $feedback = $stmt->fetchAll();
 
+        $title = '№ ' . $id;
+
+        if (!empty($data) && isset($data[0]['contenttype']) && isset($data[0]['contentid'])) {
+            $contenttype = $data[0]['contenttype'];
+            $contentid   = $data[0]['contentid'];
+            $record      = $app['storage']->getContent("$contenttype/$contentid");
+            if (! empty($record)) {
+                $title = $record->getTitle();
+            }
+        }
+
         return $this->render('@is_useful/backend/feedback.twig', [
-            'title'        => 'Feedback » № ' . $id,
+            'title'        => 'Feedback » ' . $title,
             'data'         => $data,
             'feedback'     => $feedback,
-            'total_unread' => count($this->getUnreadFeedback()),
+            'total_unread' => count($this->getUnreadFeedback($app['db'])),
         ], []);
     }
 
