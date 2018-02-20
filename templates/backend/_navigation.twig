@@ -1,6 +1,19 @@
-<div>
-    <p>
-        <a class="btn btn-tertiary" href="{{ path('is_useful.index') }}">Index</a>
-        <a class="btn btn-tertiary" href="{{ path('is_useful.unread') }}">View unread feedback</a>
-    </p>
-</div>
+{% set indexActiveClass = global.request.get('_route') == 'is_useful.index' ? 'active' : '' %}
+{% set unreadActiveClass = global.request.get('_route') == 'is_useful.unread' ? 'active' : '' %}
+
+<nav class="navbar navbar-default is-useful-navbar">
+  
+      <ul class="nav navbar-nav ">
+        <li class="{{indexActiveClass}}"><a href="{{ path('is_useful.index') }}"><i class="fa fa-home"></i> <span class="hidden-xs">Feedback overview</span></a></li>
+      
+        <li class="{{unreadActiveClass}}"><a class="" href="{{ path('is_useful.unread') }}"><i class="fa fa-inbox"></i> 
+            {% if feedback is not empty %} 
+                View unread feedback <span class="label label-danger">{{feedback|length}}</span>
+            {% else %}
+                No unread feedback
+            {% endif %}
+        </a></li>   
+      </ul>
+
+</nav>
+

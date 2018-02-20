@@ -172,6 +172,12 @@ class Extension extends SimpleExtension
             ;
         }
 
+        $assets[] = StyleSheet::create()
+            ->setFileName('extensions/vendor/twokings/is-useful/extension.css')
+            ->setLate(true)
+            ->setZone(Zone::BACKEND)
+        ;
+        
         return $assets;
     }
 

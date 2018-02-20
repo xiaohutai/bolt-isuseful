@@ -50,4 +50,4 @@ jQuery(function ($) {
             $parent.html('<span class="is-useful-success">' + thanks + '</span>');
         }
     });
-}
+})

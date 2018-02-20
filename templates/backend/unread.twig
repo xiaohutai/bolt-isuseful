@@ -8,11 +8,11 @@
 
     {{ include('@is_useful/backend/_navigation.twig') }}
 
-    {% if feedback is not empty %}
+     {% if feedback is not empty %}
         <table data-table>
             <thead>
                 <th>IP</th>
-                <th>Datetime</th>
+                <th>Date</th>
                 <th>Message</th>
                 <th>Actions</th>
             </thead>
@@ -25,13 +25,20 @@
                     {% set statusReadLink = path('is_useful.feedback.status', { id: item.id, status: 'read' }) %}
                     {% set statusDoneLink = path('is_useful.feedback.status', { id: item.id, status: 'done' }) %}
                     <tr>
-                        <td>{{ ip }}</td>
-                        <td>{{ datetime }}</td>
-                        <td>{{ message }} </td>
+                        <td class="is-useful-ip">{{ ip }}</td>
+                        <td class="is-useful-datetime">{{ datetime }}</td>
+                        <td class="is-useful-message">
+                        {% if message is not empty %}
+                            <div class="well well-sm">
+                                {{ message }}
+                            </div>
+                            {% endif %}
+                        </td>
                         <td>
-                            <a class="btn btn-tertiary" href="{{ deleteLink }}" onclick="return confirm('Are you sure?')">Delete</a>
-                            <a class="btn btn-secondary" href="{{ statusReadLink }}">Mark as read</a>
-                            <a class="btn btn-secondary" href="{{ statusDoneLink }}">Mark as done</a>
+                            <a class="btn btn-secondary" href="{{ statusReadLink }}"><i class="fa fa-eye"></i> <span class="visible-md-inline visible-lg-inline">Mark as read</span></a>
+                            <a class="btn btn-secondary btn-success" href="{{ statusDoneLink }}"><i class="fa fa-check"></i> <span class="visible-md-inline visible-lg-inline">Mark as done</span></a>
+                            <a class="btn btn-tertiary" href="{{ deleteLink }}" onclick="return confirm('Are you sure?')"><i class="fa fa-trash"></i></a>
+                            
                         </td>
                     </tr>
                 {% endfor %}

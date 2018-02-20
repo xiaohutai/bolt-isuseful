@@ -11,9 +11,37 @@
     {% set cumulativeNo  = 0 %}
     {% set cumulativeYes = 0 %}
 
+    {% for item in data %}
+        {% set totals        = item.totals|json_decode %}
+        {% set totalsNo      = totals.no is defined ? totals.no : 0 %}
+        {% set totalsYes     = totals.yes is defined  ? totals.yes : 0 %}
+        
+        {% set cumulativeNo  = cumulativeNo  + totalsNo %}
+        {% set cumulativeYes = cumulativeYes + totalsYes %}   
+    {% endfor %}
+
+    {% if (cumulativeNo + cumulativeYes) > 0 %}
+        {% set percentageYes = (100 * cumulativeYes / ( cumulativeNo + cumulativeYes )) %}
+        {% set percentageNo = (100 * cumulativeNo / ( cumulativeNo + cumulativeYes )) %}
+
+        <div class="is-useful-quick-results">
+            <p class="is-useful-block-total well">
+                {{ cumulativeYes + cumulativeNo }}
+                <br/><small>Total</small>
+            </p>
+            <p class="is-useful-block-yes well">{{ cumulativeYes }} Yes 
+                <br /><small>({{ percentageYes|number_format(0,'.','') }}%)</small>
+            </p>
+            <p class="is-useful-block-no well">{{ cumulativeNo }} No
+                <br /><small>({{ percentageNo|number_format(0,'.','') }}%)</small>
+            </p>
+        </div>
+    {% endif %}
+
+
     <table data-table>
         <thead>
-            <th>Record</th>
+            <th>Page</th>
             <th>No</th>
             <th>No %</th>
             <th>Yes</th>
@@ -36,23 +64,20 @@
                 {% setcontent record = "#{contenttype}/#{contentid}" %}
                 <tr>
                     <td>
-                        {{ record.title}}
-                        <small>
-                            [<a href="{{ path('editcontent', { contenttypeslug: contenttype, id: contentid }) }}">Edit</a>]
-                        </small>
+                        <a href="{{ path('is_useful.view', { id: item.id }) }}" title="View detailed feedback for this page">{{ record.title}}</a>
                     </td>
                     <td>{{ totalsNo }}</td>
-                    <td>{{ percentageNo|number_format(2,'.','') }}%</td>
+                    <td>{{ percentageNo|number_format(0,'.','') }}%</td>
                     <td>{{ totalsYes }}</td>
-                    <td>{{ percentageYes|number_format(2,'.','') }}%</td>
+                    <td>{{ percentageYes|number_format(0,'.','') }}%</td>
                     <td>{{ totalsTotal }}</td>
                     <td>
-                        {% if totalFeedback > 0 %}
                         <a class="btn btn-tertiary" href="{{ path('is_useful.view', { id: item.id }) }}">
                             View
+                            {% if totalFeedback > 0 %}
                             <span class="badge">{{ totalFeedback }}</span>
+                            {% endif %}
                         </a>
-                        {% endif %}
                     </td>
                 </tr>
                 {% set cumulativeNo  = cumulativeNo  + totalsNo %}
@@ -61,21 +86,7 @@
         </tbody>
     </table>
 
-    <hr>
-
-    <ul>
-        <li>
-            <strong>Total stats</strong>:
-            <ul>
-                <li>
-                    <strong>No</strong>: {{ cumulativeNo }} ({{ (100 * cumulativeNo / ( cumulativeNo + cumulativeYes ))|number_format(2,'.','') }})
-                </li>
-                <li>
-                    <strong>Yes</strong>: {{ cumulativeYes }} ({{ (100 * cumulativeYes / ( cumulativeNo + cumulativeYes ))|number_format(2,'.','') }}%)
-                </li>
-            </ul>
-        </li>
-    </ul>
+    
 
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
     <script type="text/javascript" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>

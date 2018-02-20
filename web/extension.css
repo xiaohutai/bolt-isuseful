@@ -24,3 +24,56 @@
     width: 1px;
     white-space: nowrap;
 }
+
+/* Backend helper styles */
+
+.is-useful-navbar {
+    margin-bottom: 2rem;
+}
+.is-useful-navbar ul {
+    width: 100%;
+}
+
+.is-useful-navbar ul > li{
+    display: inline-block;
+}
+
+
+.is-useful-navbar ul li:last-child{
+    float: right;
+}
+
+
+.is-useful-ip,
+.is-useful-datetime {
+    
+}
+
+.is-useful-message .well{
+    margin-bottom: 0;
+}
+
+.is-useful-actions .btn {
+    margin-bottom: .5rem;
+}
+
+.is-useful-quick-results {
+    margin-bottom: 2rem;
+}
+
+.is-useful-quick-results .well{
+    display: inline-block;
+    width: 33%;
+    max-width: 130px;
+    font-size: 1.5em;
+    font-weight: bold;
+    text-align: center;
+}
+
+.is-useful-block-no.well {
+    background: #f2dede;
+}
+
+.is-useful-block-yes.well {
+    background: #dff0d8;
+}
