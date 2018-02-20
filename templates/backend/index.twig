@@ -33,6 +33,7 @@
                 {% set percentageNo  = (totalsNo / totalsTotal) * 100 %}
                 {% set percentageYes = (totalsYes / totalsTotal) * 100 %}
                 {% set totalFeedback = item.count %}
+                {% set totalUnread   = item.count_unread %}
                 {% setcontent record = "#{contenttype}/#{contentid}" %}
                 <tr>
                     <td>
@@ -50,7 +51,10 @@
                         {% if totalFeedback > 0 %}
                         <a class="btn btn-tertiary" href="{{ path('is_useful.view', { id: item.id }) }}">
                             View
-                            <span class="badge">{{ totalFeedback }}</span>
+                            {% if totalUnread > 0 %}
+                                <span class="badge">{{ totalUnread }}</span>
+                            {% endif %}
+                            {# --- {{ totalFeedback }} --- #}
                         </a>
                         {% endif %}
                     </td>

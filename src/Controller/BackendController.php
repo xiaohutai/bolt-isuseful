@@ -85,16 +85,16 @@ class BackendController extends Base
      */
     public function indexGet(Application $app, Request $request)
     {
-        $status = FeedbackStatus::REMOVED;
+        $status = FeedbackStatus::UNREAD;
 
-        $sql  = "SELECT `bolt_is_useful`.*, COUNT(`bolt_is_useful_feedback`.`is_useful_id`) AS count";
+        $sql  = "SELECT `bolt_is_useful`.*,";
+        $sql .= " COUNT(`bolt_is_useful_feedback`.`is_useful_id`) AS count,";
+        $sql .= " SUM(CASE WHEN `bolt_is_useful_feedback`.`status` = :status THEN 1 ELSE 0 END) AS count_unread";
         $sql .= " FROM `bolt_is_useful`";
         $sql .= " LEFT JOIN `bolt_is_useful_feedback` ON `bolt_is_useful`.`id` = `bolt_is_useful_feedback`.`is_useful_id`";
-        $sql .= " AND `bolt_is_useful_feedback`.`status` != :status";
         $sql .= " GROUP BY `bolt_is_useful`.`id`";
         $stmt = $app['db']->prepare($sql);
         $stmt->bindParam('status', $status);
-        // $stmt = $app['db']->prepare("SELECT * FROM `bolt_is_useful`");
         $stmt->execute();
         $data = $stmt->fetchAll();
 
