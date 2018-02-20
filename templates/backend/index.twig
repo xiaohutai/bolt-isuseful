@@ -15,9 +15,9 @@
         {% set totals        = item.totals|json_decode %}
         {% set totalsNo      = totals.no is defined ? totals.no : 0 %}
         {% set totalsYes     = totals.yes is defined  ? totals.yes : 0 %}
-        
+
         {% set cumulativeNo  = cumulativeNo  + totalsNo %}
-        {% set cumulativeYes = cumulativeYes + totalsYes %}   
+        {% set cumulativeYes = cumulativeYes + totalsYes %}
     {% endfor %}
 
     {% if (cumulativeNo + cumulativeYes) > 0 %}
@@ -29,7 +29,7 @@
                 {{ cumulativeYes + cumulativeNo }}
                 <br/><small>Total</small>
             </p>
-            <p class="is-useful-block-yes well">{{ cumulativeYes }} Yes 
+            <p class="is-useful-block-yes well">{{ cumulativeYes }} Yes
                 <br /><small>({{ percentageYes|number_format(0,'.','') }}%)</small>
             </p>
             <p class="is-useful-block-no well">{{ cumulativeNo }} No
@@ -37,7 +37,6 @@
             </p>
         </div>
     {% endif %}
-
 
     <table data-table>
         <thead>
@@ -61,6 +60,7 @@
                 {% set percentageNo  = (totalsNo / totalsTotal) * 100 %}
                 {% set percentageYes = (totalsYes / totalsTotal) * 100 %}
                 {% set totalFeedback = item.count %}
+                {% set totalUnread   = item.count_unread %}
                 {% setcontent record = "#{contenttype}/#{contentid}" %}
                 <tr>
                     <td>
@@ -74,19 +74,17 @@
                     <td>
                         <a class="btn btn-tertiary" href="{{ path('is_useful.view', { id: item.id }) }}">
                             View
-                            {% if totalFeedback > 0 %}
-                            <span class="badge">{{ totalFeedback }}</span>
+                            {% if totalUnread > 0 %}
+                            <span class="badge">{{ totalUnread }}</span>
                             {% endif %}
                         </a>
                     </td>
                 </tr>
-                {% set cumulativeNo  = cumulativeNo  + totalsNo %}
-                {% set cumulativeYes = cumulativeYes + totalsYes %}
             {% endfor %}
         </tbody>
     </table>
 
-    
+
 
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
     <script type="text/javascript" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>

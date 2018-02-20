@@ -18,8 +18,8 @@
         {% set totalsNo      = totals.no is defined ? totals.no : 0 %}
         {% set totalsYes     = totals.yes is defined  ? totals.yes : 0 %}
         {% set totalsTotal   = totalsNo + totalsYes %}
-        {% set percentageNo  = ((totalsNo / totalsTotal) * 100)|round  %}
-        {% set percentageYes = ((totalsYes / totalsTotal) * 100)|round %}
+        {% set percentageNo  = ((totalsNo / totalsTotal) * 100)  %}
+        {% set percentageYes = ((totalsYes / totalsTotal) * 100) %}
         {% setcontent record = "#{contenttype}/#{contentid}" %}
 
         <div class="is-useful-quick-results">
@@ -27,7 +27,7 @@
                 {{ totalsYes + totalsNo }}
                 <br/><small>Total</small>
             </p>
-            <p class="is-useful-block-yes well">{{ totalsYes }} Yes 
+            <p class="is-useful-block-yes well">{{ totalsYes }} Yes
                 <br /><small>({{ percentageYes|number_format(0,'.','') }}%)</small>
             </p>
             <p class="is-useful-block-no well">{{ totalsNo }} No
@@ -77,7 +77,7 @@
                             <a class="btn btn-secondary" href="{{ statusReadLink }}"><i class="fa fa-eye"></i> <span class="visible-md-inline visible-lg-inline">Mark as read</span></a>
                             <a class="btn btn-secondary btn-success" href="{{ statusDoneLink }}"><i class="fa fa-check"></i> <span class="visible-md-inline visible-lg-inline">Mark as done</span></a>
                             <a class="btn btn-tertiary" href="{{ deleteLink }}" onclick="return confirm('Are you sure?')"><i class="fa fa-trash"></i></a>
-                            
+
                         </td>
                     </tr>
                 {% endfor %}

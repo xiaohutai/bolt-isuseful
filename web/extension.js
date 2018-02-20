@@ -1,4 +1,17 @@
 jQuery(function ($) {
+
+    // Ping a 'yes' or 'no' for when statistics is set to `true`
+    function isUsefulPing(contenttype, contentid, type) {
+        $.post(
+            '/async/is-useful',
+            {
+                contenttype : contenttype,
+                contentid   : contentid,
+                type        : type
+            }
+        );
+    }
+
     // Hide labels for hidden fields
     $('.is-useful-wrapper .expand').hide();
 
@@ -8,12 +21,29 @@ jQuery(function ($) {
         var $parent = $(this).parents('.is-useful-wrapper');
         var thanks = $parent.attr('data-thanks');
         $parent.html('<span class="is-useful-success">' + thanks + '</span>');
+
+        if ($parent.attr('data-statistics') == 'true') {
+            isUsefulPing(
+                $parent.attr('data-contenttype'),
+                $parent.attr('data-contentid'),
+                'yes'
+            );
+        }
     });
 
     // Determine whether to expand a form or just follow a link.
     $('.is-useful-wrapper .is-not-useful').on('click', function(e){
         var $parent = $(this).parents('.is-useful-wrapper');
         var type = $parent.attr('data-type');
+
+        if ($parent.attr('data-statistics') == 'true') {
+            isUsefulPing(
+                $parent.attr('data-contenttype'),
+                $parent.attr('data-contentid'),
+                'no'
+            );
+        }
+
         if (type == 'boltforms') {
             e.preventDefault();
             $(this)
@@ -35,9 +65,10 @@ jQuery(function ($) {
         ;
         $(this)
             .parents('.is-useful-wrapper')
+            .find('.is-not-useful')
             .attr('aria-expanded', false)
         ;
-    })
+    });
 
     // There is a e.preventDefault() on the form submission, so we can't just
     // add an extra handler. The only way to handle anything after it, is to

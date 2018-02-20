@@ -79,28 +79,44 @@ class BackendController extends Base
 
     /**
      *
+     */
+    private function getUnreadFeedback()
+    {
+        $status = FeedbackStatus::UNREAD;
+
+        $stmt = $app['db']->prepare("SELECT * FROM `bolt_is_useful_feedback` WHERE `status` = :status");
+        $stmt->bindParam('status', $status);
+        $stmt->execute();
+        $feedback = $stmt->fetchAll();
+
+        return $feedback;
+    }
+
+    /**
+     *
      *
      * @param Application $app
      * @param Request     $request
      */
     public function indexGet(Application $app, Request $request)
     {
-        $status = FeedbackStatus::REMOVED;
+        $status = FeedbackStatus::UNREAD;
 
-        $sql  = "SELECT `bolt_is_useful`.*, COUNT(`bolt_is_useful_feedback`.`is_useful_id`) AS count";
+        $sql  = "SELECT `bolt_is_useful`.*,";
+        $sql .= " COUNT(`bolt_is_useful_feedback`.`is_useful_id`) AS count,";
+        $sql .= " SUM(CASE WHEN `bolt_is_useful_feedback`.`status` = :status THEN 1 ELSE 0 END) AS count_unread";
         $sql .= " FROM `bolt_is_useful`";
         $sql .= " LEFT JOIN `bolt_is_useful_feedback` ON `bolt_is_useful`.`id` = `bolt_is_useful_feedback`.`is_useful_id`";
-        $sql .= " AND `bolt_is_useful_feedback`.`status` != :status";
         $sql .= " GROUP BY `bolt_is_useful`.`id`";
         $stmt = $app['db']->prepare($sql);
         $stmt->bindParam('status', $status);
-        // $stmt = $app['db']->prepare("SELECT * FROM `bolt_is_useful`");
         $stmt->execute();
         $data = $stmt->fetchAll();
 
         return $this->render('@is_useful/backend/index.twig', [
-            'title' => 'Feedback',
-            'data'  => $data,
+            'title'        => 'Feedback',
+            'data'         => $data,
+            'total_unread' => count($this->getUnreadFeedback()),
         ], []);
     }
 
@@ -117,8 +133,9 @@ class BackendController extends Base
         $feedback = $stmt->fetchAll();
 
         return $this->render('@is_useful/backend/unread.twig', [
-            'title' => 'Unread Feedback',
-            'feedback'=> $feedback,
+            'title'        => 'Unread Feedback',
+            'feedback'     => $feedback,
+            'total_unread' => count($feedback),
         ], []);
     }
 
@@ -146,9 +163,10 @@ class BackendController extends Base
         $feedback = $stmt->fetchAll();
 
         return $this->render('@is_useful/backend/feedback.twig', [
-            'title'    => 'Feedback » № ' . $id,
-            'data'     => $data,
-            'feedback' => $feedback,
+            'title'        => 'Feedback » № ' . $id,
+            'data'         => $data,
+            'feedback'     => $feedback,
+            'total_unread' => count($this->getUnreadFeedback()),
         ], []);
     }
 
