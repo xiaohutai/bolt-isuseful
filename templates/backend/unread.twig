@@ -11,6 +11,7 @@
      {% if feedback is not empty %}
         <table data-table>
             <thead>
+                <th>Page</th>
                 <th>IP</th>
                 <th>Date</th>
                 <th>Message</th>
@@ -25,6 +26,12 @@
                     {% set statusReadLink = path('is_useful.feedback.status', { id: item.id, status: 'read' }) %}
                     {% set statusDoneLink = path('is_useful.feedback.status', { id: item.id, status: 'done' }) %}
                     <tr>
+                        {% setcontent record = "#{item.contenttype}/#{item.contentid}" %}
+                        <td class="is-useful">
+                            <a href="{{ path('is_useful.view', { id: item.is_useful_id }) }}" title="View detailed feedback for this page">
+                                {{ record.title }}
+                            </a>
+                        </td>
                         <td class="is-useful-ip">{{ ip }}</td>
                         <td class="is-useful-datetime">{{ datetime }}</td>
                         <td class="is-useful-message">

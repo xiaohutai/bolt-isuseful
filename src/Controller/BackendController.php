@@ -127,7 +127,14 @@ class BackendController extends Base
     {
         $status = FeedbackStatus::UNREAD;
 
-        $stmt = $app['db']->prepare("SELECT * FROM `bolt_is_useful_feedback` WHERE `status` = :status");
+        $sql  = "SELECT `bolt_is_useful_feedback`.*,";
+        $sql .= " `bolt_is_useful`.`contenttype`,";
+        $sql .= " `bolt_is_useful`.`contentid`";
+        $sql .= " FROM `bolt_is_useful_feedback`";
+        $sql .= " LEFT JOIN `bolt_is_useful` ON `bolt_is_useful_feedback`.`is_useful_id` = `bolt_is_useful`.`id`";
+        $sql .= " WHERE `status` = :status";
+
+        $stmt = $app['db']->prepare($sql);
         $stmt->bindParam('status', $status);
         $stmt->execute();
         $feedback = $stmt->fetchAll();
