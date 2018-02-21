@@ -64,7 +64,9 @@
                 {% setcontent record = "#{contenttype}/#{contentid}" %}
                 <tr>
                     <td>
-                        <a href="{{ path('is_useful.view', { id: item.id }) }}" title="View detailed feedback for this page">{{ record.title}}</a>
+                        <a href="{{ path('is_useful.view', { id: item.id }) }}" title="View detailed feedback for this page">
+                            {{ record.title|default('(Untitled)') }}
+                        </a>
                     </td>
                     <td>{{ totalsNo }}</td>
                     <td>{{ percentageNo|number_format(0,'.','') }}%</td>

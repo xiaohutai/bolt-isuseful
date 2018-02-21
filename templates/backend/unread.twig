@@ -25,11 +25,13 @@
                     {% set deleteLink = path('is_useful.feedback.delete', { id: item.id }) %}
                     {% set statusReadLink = path('is_useful.feedback.status', { id: item.id, status: 'read' }) %}
                     {% set statusDoneLink = path('is_useful.feedback.status', { id: item.id, status: 'done' }) %}
+                    {% set viewLink       = item.is_useful_id is not empty ? path('is_useful.view', { id: item.is_useful_id }) : '' %}
+
                     <tr>
                         {% setcontent record = "#{item.contenttype}/#{item.contentid}" %}
                         <td class="is-useful">
-                            <a href="{{ path('is_useful.view', { id: item.is_useful_id }) }}" title="View detailed feedback for this page">
-                                {{ record.title }}
+                            <a href="{{ viewLink }}" title="View detailed feedback for this page">
+                                {{ record.title|default('(Untitled)') }}
                             </a>
                         </td>
                         <td class="is-useful-ip">{{ ip }}</td>
