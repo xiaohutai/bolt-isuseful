@@ -1,11 +1,11 @@
 .is-useful-wrapper {
     position: relative;
     width: 100%;
+}
 
-    .is-not-useful,
-    .is-useful {
-        margin-left: 0.4em;
-    }
+.is-useful-wrapper .is-not-useful,
+.is-useful-wrapper .is-useful {
+    margin-left: 0.4em;
 }
 
 .boltforms-hidden-row {
