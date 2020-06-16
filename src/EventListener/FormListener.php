@@ -35,7 +35,7 @@ class FormListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            BoltFormsEvents::SUBMISSION_PRE_PROCESSOR => ['onFeedback']
+            BoltFormsEvents::SUBMISSION_POST_PROCESSOR => ['onFeedback']
         ];
     }
 
@@ -71,6 +71,16 @@ class FormListener implements EventSubscriberInterface
                 $data->get('type'),
                 $data->get('id')
             );
+
+            // If data is empty, don't store it, because it is noise!
+            // If data is not supplied it is usually NULL
+
+            foreach (['id', 'message', 'type'] as $key) {
+                if (empty($data->get($key))) {
+                    $this->app['logger.system']->error("[IsUseful] Ignored request: $key is empty!");
+                    return;
+                }
+            }
 
             $this->app['db']->insert('bolt_is_useful_feedback', [
                 'contenttype'  => $data->get('type'),
