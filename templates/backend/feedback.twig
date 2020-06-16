@@ -87,14 +87,6 @@
         This item has no feedback yet.
     {% endif %}
 
-    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
-    <script type="text/javascript" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
-    <script>
-    $(document).ready(function(){
-        $('[data-table]').DataTable({
-            pageLength: 100
-        });
-    });
-    </script>
+    {{ include('@is_useful/backend/_datatables.twig') }}
 
 {% endblock page_main %}

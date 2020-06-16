@@ -1,5 +1,6 @@
-{% set indexActiveClass = global.request.get('_route') == 'is_useful.index' ? 'active' : '' %}
+{% set indexActiveClass  = global.request.get('_route') == 'is_useful.index' ? 'active' : '' %}
 {% set unreadActiveClass = global.request.get('_route') == 'is_useful.unread' ? 'active' : '' %}
+{% set cleanActiveClass  = global.request.get('_route') == 'is_useful.feedback.clean' ? 'active' : '' %}
 
 <nav class="navbar navbar-default is-useful-navbar">
     <ul class="nav navbar-nav ">
@@ -16,6 +17,11 @@
                 {% else %}
                     No unread feedback
                 {% endif %}
+            </a>
+        </li>
+        <li class="{{ cleanActiveClass }}">
+            <a href="{{ path('is_useful.feedback.clean') }}"><i class="fa fa-trash"></i>
+                Clean
             </a>
         </li>
     </ul>

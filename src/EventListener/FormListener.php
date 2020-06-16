@@ -77,7 +77,7 @@ class FormListener implements EventSubscriberInterface
 
             foreach (['id', 'message', 'type'] as $key) {
                 if (empty($data->get($key))) {
-                    $this->app['logger.system']->error("[IsUseful] Ignored request: $key is empty!");
+                    $this->app['logger.system']->error("[IsUseful] Ignored request: $key is empty!", [ 'event' => 'extensions' ]);
                     return;
                 }
             }

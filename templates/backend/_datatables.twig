@@ -1,0 +1,23 @@
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+
+
+
+
+
+<script>
+    $(document).ready(function(){
+        $('[data-table]').DataTable({
+            pageLength: 100
+        });
+    });
+</script>
+
+<style>
+    /* Fixes a clash with Bootstrap/Bolt annoying double indicators */
+    table.dataTable thead .sorting_asc:after,
+    table.dataTable thead .sorting_desc:after,
+    table.dataTable thead .sorting:after {
+        content: '' !important;
+    }
+</style>

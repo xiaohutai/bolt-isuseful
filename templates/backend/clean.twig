@@ -8,6 +8,37 @@
 
     {{ include('@is_useful/backend/_navigation.twig') }}
 
+        <h3>Filter</h3>
+        <p>Filter using a part of a message or an IP address. Afterwards you can purge records.</p>
+        <form class="form-inline" action="{{ path('is_useful.feedback.clean') }}" method="get">
+            <input class="form-control" type="text" name="filter" value="{{ app.request.query.get('filter') }}">
+            <button class="btn btn-primary" type="submit">
+                <i class="fa fa-filter"></i> Filter
+            </button>
+        </form>
+        <hr>
+        <h3>Clean</h3>
+        <p>Clean up records. This will remove empty and invalid records.</p>
+        <form action="{{ path('is_useful.feedback.clean.post') }}" method="post">
+            <button class="btn btn-secondary" type="submit">
+                <i class="fa fa-ban"></i> Clean
+            </button>
+        </form>
+
+        {% if feedback is not empty and app.request.query.get('filter') %}
+            <hr>
+            <h3>Purge</h3>
+            <p>Remove all records that are shown below.</p>
+            <form action="{{ path('is_useful.feedback.clean.post') }}" method="post">
+                <input type="hidden" name="filter" value="{{ app.request.query.get('filter') }}">
+                <button class="btn btn-danger" type="submit">
+                    <i class="fa fa-ban"></i> Remove all records with: [{{ app.request.query.get('filter') }}]
+                </button>
+            </form>
+            <hr>
+        {% endif %}
+
+
      {% if feedback is not empty %}
         <table data-table>
             <thead>
@@ -15,7 +46,7 @@
                 <th>IP</th>
                 <th>Date</th>
                 <th>Message</th>
-                <th>Actions</th>
+                {# <th>Actions</th> #}
             </thead>
             <tbody>
                 {% for item in feedback %}
@@ -43,18 +74,19 @@
                             </div>
                             {% endif %}
                         </td>
+                        {#
                         <td>
                             <a class="btn btn-secondary" href="{{ statusReadLink }}"><i class="fa fa-eye"></i> <span class="visible-md-inline visible-lg-inline">Mark as read</span></a>
                             <a class="btn btn-secondary btn-success" href="{{ statusDoneLink }}"><i class="fa fa-check"></i> <span class="visible-md-inline visible-lg-inline">Mark as done</span></a>
                             <a class="btn btn-tertiary" href="{{ deleteLink }}" onclick="return confirm('Are you sure?')"><i class="fa fa-trash"></i></a>
-
                         </td>
+                        #}
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     {% else %}
-        This item has no feedback yet.
+
     {% endif %}
 
     {{ include('@is_useful/backend/_datatables.twig') }}

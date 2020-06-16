@@ -59,6 +59,18 @@ class BackendController extends Base
             ->bind('is_useful.feedback.status')
         ;
 
+        $ctr
+            ->get('/clean', [$this, 'cleanGet'])
+            ->before([$this, 'before'])
+            ->bind('is_useful.feedback.clean')
+        ;
+
+        $ctr
+            ->post('/clean', [$this, 'cleanPost'])
+            ->before([$this, 'before'])
+            ->bind('is_useful.feedback.clean.post')
+        ;
+
         return $ctr;
     }
 
@@ -251,7 +263,7 @@ class BackendController extends Base
     }
 
     /**
-     *
+     * Set feedback status
      */
     public function setFeedbackStatus(Application $app, Request $request, $id, $status)
     {
@@ -265,5 +277,94 @@ class BackendController extends Base
         }
 
         return $this->redirect( $request->headers->get('referer') );
+    }
+
+    /**
+     * Clean up feedback using simple rules
+     */
+    public function cleanGet(Application $app, Request $request)
+    {
+        $feedback = [];
+
+        $originalValue = $request->query->get('filter', false);
+        if (! empty($originalValue)) {
+            $likeValue = '%' . $originalValue . '%';
+            $status = FeedbackStatus::REMOVED;
+
+            $stmt = $app['db']->prepare("SELECT * FROM `bolt_is_useful_feedback` WHERE `status` != :status AND ( `message` LIKE :msg OR `ip` = :ip)");
+            $stmt->bindParam('status', $status);
+            $stmt->bindParam('msg', $likeValue);
+            $stmt->bindParam('ip', $originalValue);
+            $stmt->execute();
+
+            $feedback = $stmt->fetchAll();
+        }
+
+       return $this->render('@is_useful/backend/clean.twig', [
+            'title'        => 'Feedback » Clean',
+            //'data'         => $data,
+            'feedback'     => $feedback,
+            'total_unread' => count($this->getUnreadFeedback($app['db'])),
+        ], []);
+    }
+
+    /**
+     * Cleans up feedback. Two options:
+     *     (A) as filtered by user
+     *     (B) general clean up inconsistencies
+     */
+    public function cleanPost(Application $app, Request $request)
+    {
+        $status = FeedbackStatus::REMOVED;
+
+        $originalValue = $request->request->get('filter', false);
+
+        // (A) Remove feedback via a LIKE query.
+        if (! empty($originalValue)) {
+            $likeValue = '%' . $originalValue . '%';
+
+            $stmt = $app['db']->prepare("UPDATE `bolt_is_useful_feedback` SET `status` = :status WHERE ( `message` LIKE :msg OR `ip` = :ip )");
+            $stmt->bindParam('status', $status);
+            $stmt->bindParam('msg', $likeValue);
+            $stmt->bindParam('ip', $originalValue);
+            $stmt->execute();
+
+            $app['logger.system']->info("[IsUseful] Purging feedback with [$originalValue]", [ 'event' => 'extensions' ]);
+        }
+        // (B) Clean up
+        else {
+            $app['logger.system']->info("[IsUseful] Cleaning feedback", [ 'event' => 'extensions' ]);
+
+            // A deep get doesn't work?
+            $ipBanlist = $app['is_useful.config']->get('ipBanlist');
+            if (empty($ipBanlist)) {
+                $ipBanlist = [];
+            }
+
+            // (1) Remove where is_useful_id = NULL
+            $stmt = $app['db']->prepare("UPDATE `bolt_is_useful_feedback` SET `status` = :status WHERE `is_useful_id` IS NULL");
+            $stmt->bindParam('status', $status);
+            $stmt->execute();
+
+            // (2) Remove where message = NULL
+            $stmt = $app['db']->prepare("UPDATE `bolt_is_useful_feedback` SET `status` = :status WHERE `message` IS NULL");
+            $stmt->bindParam('status', $status);
+            $stmt->execute();
+
+            // (3) Remove where ip is in ipBanlist (add it to `ipBanlist` in `isuseful.twokings_local.yml`)
+            $sql = "UPDATE `bolt_is_useful_feedback` SET `status` = :status WHERE `ip` IN (:ip)";
+            $values = [
+                'status' => $status,
+                'ip' => $ipBanlist,
+            ];
+            $types = [
+                'status' => \PDO::PARAM_STR,
+                'ip' => \Doctrine\DBAL\Connection::PARAM_STR_ARRAY,
+            ];
+            $stmt = $app['db']->executeQuery($sql, $values, $types);
+            $stmt->execute();
+        }
+
+        return $this->redirect( $app['url_generator']->generate('is_useful.feedback.clean') );
     }
 }
